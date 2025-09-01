@@ -21,5 +21,3 @@ Il permet de gérer une liste de personnes avec les informations suivantes :
 - MySQL
 - Maven
 - Postman (pour tester l'API)
-
-## 🏗️ Architecture
