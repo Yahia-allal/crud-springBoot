@@ -4,6 +4,7 @@ package com.yahia.crud_springBoot;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,13 +27,18 @@ public class PersonController {
 
     @PostMapping
     public ResponseEntity<Person> createPerson(@RequestBody Person person){
-        return new ResponseEntity<>(personRepository.save(person), HttpStatus.CREATED);
+
+        if(person.getName().length()>2){
+            return new ResponseEntity<>(personRepository.save(person), HttpStatus.CREATED);}
+        else {
+            throw new IllegalArgumentException("Name is too short");
+        }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Person> getPerson(@PathVariable Long id){
         Optional<Person> person = personRepository.findById(id);
-        return person.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return person.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseThrow(()->new PersonNotFoundException("Ohhhh !! Person Not Found"));
 
 
     }
@@ -49,7 +55,7 @@ public class PersonController {
             personRepository.save(existingPerson);
             return new ResponseEntity<>(existingPerson, HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        throw new PersonNotFoundException("Ohhhh !! Person Not Found");
 
     }
 
@@ -61,7 +67,7 @@ public class PersonController {
             return new ResponseEntity<>( HttpStatus.OK);
 
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        throw new PersonNotFoundException("Ohhhh !! Person Not Found");
     }
 
 
